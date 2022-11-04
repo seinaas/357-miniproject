@@ -664,13 +664,17 @@ const Home: NextPage = () => {
               <h2 className='text-4xl font-bold text-gray-600'>Surveys</h2>
               <p className='mt-4 text-xl leading-8'>
                 In order to collect data regarding our target demographic
-                quickly and efficiently, we opted to create a Google Forms
-                survey that was accessible through a sharable link. The survey
+                quickly and efficiently, we opted to create a{' '}
+                <a href='https://drive.google.com/file/d/1gc-5qge2E2GkfMQ_JqDek1Bzv_MgFe6a/view?usp=sharing'>
+                  Google Forms survey
+                </a>{' '}
+                that was accessible through a sharable link. The survey
                 consisted of 20 questions, and was designed to collect data
                 regarding the user’s dining habits, their opinions on the
                 current QR code system, and their thoughts on our proposed
                 solution.
               </p>
+              <p className='mt-6'>The Following Card is Clickable</p>
               <div className='relative w-full h-0 pt-[75%] pb-0 shadow-xl mt-6 mb-4 overflow-hidden rounded-xl will-change-transform'>
                 <iframe
                   loading='lazy'

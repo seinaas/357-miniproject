@@ -1,9 +1,10 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import FutureImage from 'next/future/image';
+import { useScrollYPosition } from 'react-use-scroll-position';
 
 type Competitor = {
   logo: JSX.Element;
@@ -135,11 +136,11 @@ const personas: Persona[] = [
   },
 ];
 
-type Wireframe = {
+type Prototype = {
   name: string;
   image: JSX.Element;
 };
-const wireframes: Wireframe[] = [
+const wireframes: Prototype[] = [
   {
     name: 'Sign In - Main',
     image: (
@@ -196,10 +197,21 @@ const wireframes: Wireframe[] = [
     ),
   },
   {
+    name: 'Restaurant',
+    image: (
+      <FutureImage
+        src='/wireframes/restaurant.png'
+        alt='Restaurant Page Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
     name: 'Discover',
     image: (
       <FutureImage
-        src='/wireframes/home.png'
+        src='/wireframes/discover.png'
         alt='Home Page Wireframe'
         fill
         className='custom-img'
@@ -263,10 +275,176 @@ const wireframes: Wireframe[] = [
   },
 ];
 
+const mockups: Prototype[] = [
+  {
+    name: 'Sign In - Main',
+    image: (
+      <FutureImage
+        src='/mockups/auth1.png'
+        alt='Auth Page 1 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Sign In - Email',
+    image: (
+      <FutureImage
+        src='/mockups/auth2.png'
+        alt='Auth Page 2 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Sign Up - Main',
+    image: (
+      <FutureImage
+        src='/mockups/auth3.png'
+        alt='Auth Page 3 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Sign Up - Email',
+    image: (
+      <FutureImage
+        src='/mockups/auth4.png'
+        alt='Auth Page 4 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Home',
+    image: (
+      <FutureImage
+        src='/mockups/home.png'
+        alt='Home Page Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Restaurant',
+    image: (
+      <FutureImage
+        src='/mockups/restaurant.png'
+        alt='Restaurant Page Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Discover',
+    image: (
+      <FutureImage
+        src='/mockups/discover.png'
+        alt='Home Page Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Random Restaurant',
+    image: (
+      <FutureImage
+        src='/mockups/random.png'
+        alt='Random Restaurant Page Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Passport - Main',
+    image: (
+      <FutureImage
+        src='/mockups/passport1.png'
+        alt='Passport Page 1 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Passport - Restaurant',
+    image: (
+      <FutureImage
+        src='/mockups/passport2.png'
+        alt='Passport Page 2 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Passport - Claim',
+    image: (
+      <FutureImage
+        src='/mockups/passport3.png'
+        alt='Passport Page 3 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+  {
+    name: 'Passport - Claimed',
+    image: (
+      <FutureImage
+        src='/mockups/passport4.png'
+        alt='Passport Page 4 Wireframe'
+        fill
+        className='custom-img'
+      />
+    ),
+  },
+];
+
+type Color = {
+  name: string;
+  code: string;
+};
+const colors: Color[] = [
+  {
+    name: 'Fern Green',
+    code: '#62814b',
+  },
+  {
+    name: 'Kobe',
+    code: '#7c2a13',
+  },
+  {
+    name: 'Tan',
+    code: '#ceb793',
+  },
+  {
+    name: 'Cosmic Latte',
+    code: '#f7f3e3',
+  },
+  {
+    name: 'White',
+    code: '#ffffff',
+  },
+];
+
 const Home: NextPage = () => {
+  const scrollY = useScrollYPosition();
   const [currentCompetitor, setCurrentCompetitor] = useState<number>(0);
   const [currentPersona, setCurrentPersona] = useState<number>(0);
   const [currentWireframe, setCurrentWireframe] = useState<number>(-1);
+  const [currentMockup, setCurrentMockup] = useState<number>(-1);
+
+  const sectionsRef = useRef<(HTMLElement | null)[]>([]);
 
   return (
     <>
@@ -275,7 +453,32 @@ const Home: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main className='mx-auto flex flex-col items-center justify-center min-h-screen px-16'>
+      <main className='relative mx-auto flex flex-col items-center justify-center min-h-screen px-16'>
+        <div className='fixed right-4 top-1/2 -translate-y-1/2 flex flex-col z-50'>
+          {sectionsRef.current?.map((element, index) => (
+            <button
+              onClick={() => window.scrollTo(0, element?.offsetTop as number)}
+              key={index}
+              className='flex justify-end items-center gap-2'
+            >
+              <h2
+                className={`text-right ${
+                  scrollY >= (element?.offsetTop || 0) &&
+                  scrollY <
+                    (sectionsRef.current[index + 1]?.offsetTop || Math.min())
+                    ? 'text-lg'
+                    : 'text-sm'
+                }`}
+              >
+                {
+                  sectionsRef.current[index]?.getElementsByTagName('h1')[0]
+                    ?.textContent
+                }
+              </h2>
+              <div className='h-[1px] w-4 bg-black' />
+            </button>
+          ))}
+        </div>
         <section className='h-screen w-full flex justify-around items-center'>
           <div className='basis-0 grow flex justify-center items-center'>
             <div className='w-9/12 max-w-sm'>
@@ -304,7 +507,7 @@ const Home: NextPage = () => {
           </div>
         </section>
         <div className='max-w-4xl w-full py-40 flex flex-col gap-40'>
-          <section>
+          <section ref={(el) => (sectionsRef.current[0] = el)}>
             <h1 className='text-6xl mb-10 font-bold'>Introduction</h1>
             <div>
               <h2 className='text-4xl font-bold text-gray-600'>The Problem</h2>
@@ -364,9 +567,9 @@ const Home: NextPage = () => {
               </p>
             </div>
             <div className='mt-6'>
-              <h1 className='text-3xl'>
+              <h3 className='text-3xl'>
                 Enter <strong className='text-[#62814b]'>foodly</strong>,
-              </h1>{' '}
+              </h3>{' '}
               <p className='text-xl leading-8'>
                 a passport-like app that keeps track of restaurants you have
                 visited and gives you rewards for dining at them using an NFC
@@ -374,7 +577,7 @@ const Home: NextPage = () => {
               </p>
             </div>
           </section>
-          <section>
+          <section ref={(el) => (sectionsRef.current[1] = el)}>
             <h1 className='text-6xl mb-10 font-bold'>Research</h1>
             <div>
               <h2 className='text-4xl font-bold text-gray-600'>
@@ -515,7 +718,7 @@ const Home: NextPage = () => {
               </p>
             </div>
           </section>
-          <section>
+          <section ref={(el) => (sectionsRef.current[2] = el)}>
             <h1 className='text-6xl mb-10 font-bold'>Analysis</h1>
             <p className='mt-3 text-xl leading-8'>
               Our research suggests that there is a real interest from Quebecers
@@ -605,8 +808,17 @@ const Home: NextPage = () => {
             </div>
             <div className='mt-8'>
               <h2 className='text-4xl font-bold text-gray-600'>Sketches</h2>
-              {/* TODO: SKETCH DESCRIPTIONS AND DECISIONS */}
-              <div className='grid grid-cols-3 gap-2 place-items-center'>
+              <p className='mt-3 text-xl leading-8'>
+                Using the lessons learned from our user research and
+                requirements phases, we started prototyping designs, beginning
+                with low-fidelity sketches. The basic pages we aimed to include
+                were for authentication, home/landing, random daily rewards,
+                discovery and several passport related pages. Additionally, we
+                sought to include the placement and relative location of our
+                basic UI elements including Input Controls, Navigational
+                Components and Informational Components.
+              </p>
+              <div className='mt-4 grid grid-cols-3 gap-2 place-items-center'>
                 <div className='relative w-full h-[300px]'>
                   <Image
                     src='/sketches/auth.png'
@@ -659,23 +871,28 @@ const Home: NextPage = () => {
             </div>
             <div className='mt-8'>
               <h2 className='text-4xl font-bold text-gray-600'>Wireframes</h2>
-              {/* TODO: WIREFRAME DESCRIPTIONS AND DECISIONS */}
-              <div className='grid grid-cols-8 gap-4 place-items-center'>
+              <p className='mt-3 text-xl leading-8'>
+                From the initial sketches, we constructed wireframes to begin
+                aligning UI elements and differentiating them via shade which we
+                will later fill with different colours in our final design. The
+                wireframe process produces a more clear picture from which to
+                draw upon for the final mockups. This phase is where we began to
+                consider the relative size of the UI elements to ensure our app
+                is visible and accessible to as many users as possible.
+              </p>
+              <div className='mt-4 grid grid-cols-4 gap-4 place-items-center'>
                 {wireframes.map((wireframe, index) => (
                   <motion.div
                     onHoverStart={() => {
                       setCurrentWireframe(index);
                     }}
                     onHoverEnd={() => {
-                      console.log(currentWireframe);
                       setCurrentWireframe(-1);
                     }}
                     whileHover={{
                       scale: 1.2,
                     }}
-                    className={`z-0 relative unset-img col-span-2 hover:shadow-xl hover:z-10 transition-shadow duration-300 rounded-[14px] overflow-hidden ${
-                      index === 8 ? 'col-start-2' : ''
-                    }`}
+                    className='z-0 relative unset-img shadow-md hover:shadow-xl hover:z-10 transition-shadow duration-300 rounded-[14px] overflow-hidden'
                     key={wireframe.name}
                   >
                     <span
@@ -705,7 +922,7 @@ const Home: NextPage = () => {
               </div>
             </div>
           </section>
-          <section>
+          <section ref={(el) => (sectionsRef.current[3] = el)}>
             <h1 className='text-6xl mb-10 font-bold'>Visual Design</h1>
             <div>
               <h2 className='text-4xl font-bold text-gray-600'>
@@ -713,44 +930,62 @@ const Home: NextPage = () => {
               </h2>
               <p className='mt-3 text-xl leading-8'>
                 We chose an earthy toned color palette to invoke feelings of
-                calm and trust in our users. The main theme will be a shade of
-                green because it embodies freshness and quality. We chose Cosmic
-                Latte as our background because it is a warm toned yet simple
-                background color that invokes feelings of calmness and peace, as
-                warm toned colors are known to be associated with warmer
-                environments such as beaches. Tan was chosen to complement the
-                Latte in a darker shade, for accents and to easier represent
-                grouped elements later on. Kobe was chosen as an accent to offer
-                contrast against the lighter backgrounds and the main theme.
-                Being a darker shade of red, it creates the feeling of power,
-                which is important in any user validation that involves some
-                decisive action (for example, an “Edit user account” button).
-                These colors combined bring the user feelings of familiarity and
-                reassurance all while motivating the user to take action and
-                manipulate the platform.
+                calm and trust in our users. We decided on Cosmic Latte as our
+                primary color because it is a warm-toned yet simple background
+                color that invokes feelings of calmness and peace, as such
+                colors are known to be associated with warmer environments such
+                as beaches. Tan was chosen to complement the Latte in a darker
+                shade to facilitate the representation of grouped elements. On
+                the other end of the spectrum, we chose White to represent a
+                lighter shade of Latte, and we use it to indicate UI components
+                that are more important in the visual hierarchy, like input
+                boxes or the navigation menu. Kobe was chosen as an accent to
+                offer contrast against the lighter backgrounds and the main
+                theme. Being a darker shade of red, it stands out from the rest
+                of the palette&apos;s lighter tone, and allows us to highlight
+                important areas such as section headers. Finally, we decided to
+                use Forest Green as our primary accent color. Embodying
+                freshness and quality, this shade of green provides a stark
+                contrast from the rest of our palette, allowing us to attract
+                the user&apos;s attention to key information and interactables
+                within our UI according to the focal point Gestalt principle.
+                These colors combined bring the user feelings of familiarity,
+                freshness, and reassurance all while motivating the user to take
+                action and manipulate the platform.
               </p>
-              <div className='relative w-full h-[240px]'>
-                <Image
-                  src='/palette.png'
-                  alt='Color Palette'
-                  layout='fill'
-                  objectFit='contain'
-                />
+              <div className='mt-4 relative w-full h-[240px] flex justify-center items-center gap-2'>
+                {colors.map((color) => (
+                  <div
+                    key={color.name}
+                    className='grow basis-0 flex flex-col justify-center items-center'
+                  >
+                    <div
+                      className='h-44 w-32 shadow-xl rounded-full'
+                      style={{ backgroundColor: color.code }}
+                    ></div>
+                    <div className='uppercase mt-4 text-center'>
+                      <p className='font-semibold leading-[0.5]'>
+                        {color.name}
+                      </p>
+                      <p className='text-md'>{color.code}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             <div className='mt-8'>
               <h2 className='text-4xl font-bold text-gray-600'>Typography</h2>
               <p className='mt-3 text-xl leading-8'>
-                We chose Proxima Nova font for our application because it is a
-                scalable font that is legible at any size which will allow for a
-                homogenized font across the entire app. The appearance is not
-                jarring to the user’s eyes and conveys the same soft tone that
-                our overall UI design aims for. Additional features which make
-                this font ideal for our usage are that Proxima Nova offers 8
-                font weights, and has case-sensitive forms for all-caps
-                settings, which is great in terms of accessibility
-                customization. Commonly seen on banners in grocery store aisles,
-                the font brings the user to think of a familiar setting
+                We landed on Proxima Nova as the font for our application
+                because it is scalable, thus legible at any size. This will
+                allow for a homogenized experience across the entire app. The
+                font’s appearance is not jarring to the user’s eyes and conveys
+                the same soft tone that our overall UI design aims for.
+                Additional features which make this font ideal for our usage are
+                that it offers 7 font weights, and has case-sensitive forms for
+                all-caps settings, which is great in terms of accessibile and
+                inclusive design. Commonly seen on banners in grocery store
+                aisles, the font brings the user to think of familiar settings
                 involving food.
               </p>
               <div className='w-full h-screen flex flex-col justify-center items-center text-center mt-3 text-7xl gap-6'>
@@ -764,8 +999,255 @@ const Home: NextPage = () => {
               </div>
             </div>
           </section>
-          <section>
+          <section ref={(el) => (sectionsRef.current[4] = el)}>
             <h1 className='text-6xl mb-10 font-bold'>Final Design</h1>
+            <div>
+              <h2 className='text-4xl font-bold text-gray-600'>Mockup</h2>
+              <p className='mt-3 text-xl leading-8'>
+                The final step in the design process involved creating high
+                fidelity mockups of our app in full colour based on our chosen
+                colour palette and typography. They also include our choices of
+                icons and logos. The interactable elements are clearly indicated
+                by their colour, icons and position on the page.
+              </p>
+
+              <div className='mt-4 grid grid-cols-4 gap-4 place-items-center'>
+                {mockups.map((mockup, index) => (
+                  <motion.div
+                    onHoverStart={() => {
+                      setCurrentMockup(index);
+                    }}
+                    onHoverEnd={() => {
+                      setCurrentMockup(-1);
+                    }}
+                    whileHover={{
+                      scale: 1.2,
+                    }}
+                    className='z-0 relative unset-img shadow-md hover:shadow-xl hover:z-10 transition-shadow duration-300 rounded-[14px] overflow-hidden'
+                    key={`mockup-${mockup.name}`}
+                  >
+                    <span
+                      className={`absolute z-10 inset-0 transition-all duration-300 ease-in-out ${
+                        currentMockup !== index && currentMockup !== -1
+                          ? 'bg-black/25'
+                          : ''
+                      }`}
+                    />
+                    {currentMockup === index && (
+                      <motion.span
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{
+                          type: 'tween',
+                          duration: 0.3,
+                          ease: 'easeInOut',
+                        }}
+                        className='block absolute top-4 left-0 px-4 py-1 rounded-r-md bg-black/75 text-white text-sm z-20'
+                      >
+                        {mockup.name}
+                      </motion.span>
+                    )}
+                    {mockup.image}
+                  </motion.div>
+                ))}
+              </div>
+
+              <h3 className='mt-8 text-2xl font-semibold'>
+                Authentication Pages
+              </h3>
+              <p className='mt-2 text-xl leading-8'>
+                The authentication pages prompt the user to sign in by linking
+                either their Google or Apple ID accounts or via the standard
+                email and password methods. First time users can select the Sign
+                up now Option at the bottom to create an account. This design
+                prevents user frustration users may have when trying to
+                authenticate since they must select an option and only then are
+                they prompted to enter their information and sign in or sign up.
+                Additionally, the navigation bar is not present on the sign in
+                page to prevent users from accessing the rest of the application
+                without an account as they would be unable to use virtually
+                every important feature of the app. The name “foodly” was chosen
+                as a play on words combining food and quickly as our app
+                connects users to their favorite local restaurants quickly.
+              </p>
+              <p className='mt-4 text-xl leading-8'>
+                The name “foodly” reassures users that we are a lighthearted fun
+                organization with a catchy name! The logo is a plate mid run to
+                reinforce that our app can get our users in front of their next
+                meal quickly and that they will be so excited to earn rewards
+                they will find themselves running to get there fast!
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>Navigation Bar</h3>
+              <p className='mt-2 text-xl leading-8'>
+                The navigation bar was changed slightly from our initial
+                sketches and wireframes to better align with Jakob’s law. The
+                home and random (die) icon were switched such that the home
+                would be placed on the left. This brings our design more in line
+                with the status quo that users are used to. The current page
+                shows the icon coloured Kobe while unselected options are in the
+                lighter green colour to better distinguish which page the user
+                has in front of them.
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>Home Page</h3>
+              <p className='mt-2 text-xl leading-8'>
+                The homepage greets users with a recommendation for their next
+                dining experience, followed by further recommendations, grouped
+                by categories including proximity, popularity and recency.
+                Pictures for each restaurant have been added to give the user a
+                preview of what dishes that location serves. These cards have
+                heart icons so users can quickly mark their favorites with ease.
+                Clicking on a card will prompt the user whether they want to be
+                redirected to the rewards page or send the location information
+                for that restaurant to the user’s default map application
+                showing them how to get to the restaurant. While app logos are
+                often located in the top left of the page, our layout was better
+                served by having it on the top right in order to avoid awkward
+                spacing and offering some symmetry when juxtaposed with the text
+                on the left hand side . The dollar signs indicate the price of
+                the restaurant so users can quickly visually distinguish
+                restaurants by their price range. The scroll limit indicator in
+                the recommendations group quickly tells the user they are at the
+                top of the list and can scroll down to see more.
+              </p>
+              <p className='mt-4 text-xl leading-8'>
+                In order to address a concern that came up when looking at the
+                app from the perspective of our user personas, we noticed that
+                there was no option to change the language from english to
+                french. In order to better accommodate our francophone users
+                (which are the majority in the province of Quebec) we added a
+                toggle to change the language from the home page. By default the
+                app will use the phone&amp;s language settings but we opted to
+                add our own solution to allow anglophone or francophone users to
+                be able to navigate the app in their preferred language quickly.
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>Restaurant Page</h3>
+              <p className='mt-2 text-xl leading-8'>
+                The restaurant page appears when the user has selected a
+                restaurant from the Home Page. It displays the name of the
+                restaurant and an image of what dishes that restaurant serves at
+                the top. It also has a heart to allow the user to quickly toggle
+                the favourites option for the restaurant they are viewing.
+                Important information regarding location, opening hours and
+                phone number are displayed right away since these are the most
+                likely to be sought by an interested user. Next the restaurant
+                can be added to the user&amp;s passport which creates a passport
+                page for that restaurant and adds it to their list. Lastly, the
+                menu is shown so users can quickly decide if they are interested
+                in ordering anything from the restaurant in question. The
+                navigation bar is removed on this page so as not to interrupt
+                the user&amp;s flow while browsing the menu. The backward
+                navigation arrow was included to allow the user to navigate back
+                to the discover page.
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>
+                Random Rewards Page
+              </h3>
+              <p className='mt-2 text-xl leading-8'>
+                The random rewards page shows a carousel the user can spin once
+                daily to receive a bonus. This aims to address our goal of
+                helping out as many local restaurants as possible as users are
+                offered additional rewards for going to new places. Users will
+                be initially drawn to the restaurant and rewards sections as
+                they are the focal points of this page. Then interested users
+                can select “Get Directions” to navigate their way to the
+                restaurant.
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>Discover Page</h3>
+              <p className='mt-2 text-xl leading-8'>
+                The Discover page allows users to search for or browse through
+                different restaurants. The first category is for the user’s
+                favorite locations, noted by the heart. Following categories can
+                be scrolled through and are sorted ethnographically (i.e indian,
+                italian, etc.) or socioeconomically (fast food).
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>
+                Passport Home Page
+              </h3>
+              <p className='mt-2 text-xl leading-8'>
+                The passport home page greets the user with a tally of how many
+                unique restaurants they have been to. This subtly incentivizes
+                them to visit many different locations to drive up this number.
+                The passport list contains a search bar as the top field so
+                user’s can quickly find the passport they need. The list is also
+                ordered alphabetically so that users wishing to browse the list
+                can do so in a methodical manner. The inspiration for this
+                design choice was how music apps like spotify and apple music
+                order their songs or albums alphabetically so users will already
+                be accustomed to this ordering and have an intuitive and
+                familiar understanding of it.
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>
+                Passport Restaurant Page
+              </h3>
+              <p className='mt-2 text-xl leading-8'>
+                When a passport is selected, the user will be redirected to this
+                page containing more detailed information regarding their
+                rewards. The progress bar shows both the user’s current standing
+                and how much they need to earn the next reward. The “collect
+                points” button takes the user to the Passport use page. Unlocked
+                rewards are displayed first to show the user what they can claim
+                immediately while locked rewards are shown afterwards to show
+                them what they can work towards.
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>
+                Passport Claim Page
+              </h3>
+              <p className='mt-2 text-xl leading-8'>
+                The passport claim page flashes directions to the user telling
+                them how to claim their points. They hold their phone near the
+                reader to validate the purchase and claim the points they have
+                earned. The background offers a visual guide on how to do this
+                by showing a phone with depictions of wireless signals emanating
+                from it. This would be animated with a rippling effect to really
+                drive this point home. Providing both textual and visual
+                directions ensures that this feature is accessible to a vast
+                array of users. Upon successful completion the user is
+                redirected to the Passport success page.
+              </p>
+              <h3 className='mt-4 text-2xl font-semibold'>
+                Passport Success Page
+              </h3>
+              <p className='mt-2 text-xl leading-8'>
+                This page serves as feedback to the user that their points were
+                claimed successfully. It shows them how many points they have
+                earned by filling the bar which would also be animated. The next
+                reward they are on track to earn is shown underneath as locked
+                as they have not yet unlocked it. The backward navigation is
+                intentionally not present here to prevent users from going back
+                to the Passport Use Page accidentally. They can instead navigate
+                forward using the continue button to take them back to the
+                Passport Restaurant Page.
+              </p>
+            </div>
+            <div className='mt-8'>
+              <h2 className='text-4xl font-bold text-gray-600'>
+                Interactive Prototype
+              </h2>
+              <iframe
+                className='mt-3'
+                width='100%'
+                height='800'
+                src='https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FqbeO0Qr0F3qJgQE1pu280i%2FSOEN-357-Mini-Project%3Fnode-id%3D29%253A118%26scaling%3Dscale-down%26page-id%3D0%253A1%26starting-point-node-id%3D29%253A118'
+                allowFullScreen
+              />
+            </div>
+          </section>
+          <section ref={(el) => (sectionsRef.current[5] = el)}>
+            <h1 className='text-6xl font-bold mb-10'>Reflection</h1>
+            <p className='text-xl leading-8'>
+              Looking back, the most challenging aspect of this project was to
+              translate the conclusions we gathered from our user research into
+              meaningful design choices for our system. Every design choice
+              brought us back to the drawing board to beg the question “why is
+              this choice the correct decision for our users?”. That being said,
+              we are confident in our design choices because we have derived
+              each of them by attempting to empathize with our target user base.
+              We identified that there is user interest in a rewards application
+              for local restaurants, and armed with that knowledge we designed
+              an appealing and engaging app to cater to those users while also
+              helping local restaurants battle inflation by getting more
+              customers in the door and boosting customer retention.
+            </p>
           </section>
         </div>
       </main>
